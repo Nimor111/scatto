@@ -6,7 +6,7 @@ import scatto.parser._
 
 case class Letters(s: String)
 
-object Hello extends App {
+object Scatto extends App {
   def parse[A](p: Parser[A], s: String): Unit = {
     val twoLettersParser = for {
       x <- p
