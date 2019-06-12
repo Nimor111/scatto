@@ -41,14 +41,12 @@ class Combinators {
     plus(nonEmptyWord, result(""))
   }
   def string(s: String): Parser[String] = {
-    s.headOption match {
-      case None => result("")
-      case Some(h) =>
-        for {
-          x <- char(h)
-          xs <- string(s.tail)
-        } yield x +: xs
-    }
+    if (s.isEmpty) result("")
+    else
+      for {
+        x <- char(s.head)
+        xs <- string(s.tail)
+      } yield x +: xs
   }
 
   def many[A](p: Parser[A]): Parser[List[A]] =
