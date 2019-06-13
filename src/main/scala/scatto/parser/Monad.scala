@@ -22,12 +22,20 @@ object MonadInstances {
     def map[B](f: A => B): F[B] = {
       Monad[F].map(fa)(f)
     }
+    def unit[B](a: B): F[B] = {
+      Monad[F].unit(a)
+    }
   }
 
   implicit val parserMonad: Monad[Parser] = new Monad[Parser] {
-    def unit[A](a: A) = new Combinators().result[A](a)
-    def flatMap[A, B](pa: Parser[A])(f: A => Parser[B]): Parser[B] =
-      new Combinators().bind(pa)(f)
+    def unit[A](v: A): Parser[A] = input => List((v, input))
+    def flatMap[A, B](pa: Parser[A])(f: A => Parser[B]): Parser[B] = input => {
+      val acc = List(List[(B, String)]())
+      pa(input)
+        .foldRight(acc)((res: (A, String), a) => f(res._1)(res._2) :: a)
+        .flatten
+    }
+
     def map[A, B](pa: Parser[A])(f: A => B): Parser[B] = input => {
       pa(input).foldRight(List[(B, String)]())((res, acc) =>
         (f(res._1), res._2) :: acc)

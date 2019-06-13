@@ -2,46 +2,33 @@ package scatto.parser
 
 import scatto.parser.types.Parser
 import scatto.parser.MonadInstances._
+import scatto.parser.MonadPlusInstances._
 
 class Combinators {
-  def result[A](v: A): Parser[A] = input => List((v, input))
-  def zero[A]: Parser[A] = _ => List()
   def item: Parser[Char] =
-    input =>
-      input.headOption match {
-        case None => List()
-        case Some(x) => List((x, input.tail))
-      }
-  def bind[A, B](pa: Parser[A])(f: A => Parser[B]): Parser[B] = input => {
-    val acc = List(List[(B, String)]())
-    pa(input)
-      .foldRight(acc)((res: (A, String), a) => f(res._1)(res._2) :: a)
-      .flatten
-  }
+    input => if (input.isEmpty) List() else List((input.head, input.tail))
   def satisfy(pred: Char => Boolean): Parser[Char] =
-    bind(item)((x: Char) => if (pred(x)) result(x) else zero)
+    for {
+      x <- item if pred(x)
+    } yield x
 
   def char(c: Char): Parser[Char] = satisfy(y => c == y)
   def digit: Parser[Char] = satisfy(x => x >= '0' && x <= '9')
   def lower: Parser[Char] = satisfy(x => x >= 'a' && x <= 'z')
   def upper: Parser[Char] = satisfy(x => x >= 'A' && x <= 'Z')
 
-  // choice combinator
-  def plus[A](pa: Parser[A], pb: Parser[A]): Parser[A] =
-    input => pa(input) ++ pb(input)
-
-  def letter: Parser[Char] = plus(lower, upper)
-  def alphanum: Parser[Char] = plus(letter, digit)
+  def letter: Parser[Char] = lower <|> upper
+  def alphanum: Parser[Char] = letter <|> digit
   def word: Parser[String] = {
     val nonEmptyWord = for {
       x <- letter
       xs <- word
     } yield x +: xs
 
-    plus(nonEmptyWord, result(""))
+    nonEmptyWord <|> Monad[Parser].unit("")
   }
   def string(s: String): Parser[String] = {
-    if (s.isEmpty) result("")
+    if (s.isEmpty) Monad[Parser].unit("")
     else
       for {
         x <- char(s.head)
@@ -50,16 +37,16 @@ class Combinators {
   }
 
   def many[A](p: Parser[A]): Parser[List[A]] =
-    plus(for {
+    (for {
       x <- p
       xs <- many(p)
-    } yield x +: xs, result(List()))
+    } yield x +: xs) <|> Monad[Parser].unit(List())
+
   def many1[A](p: Parser[A]): Parser[List[A]] =
     for {
       x <- p
       xs <- many(p)
     } yield x +: xs
-
 }
 
 object Combinators {}
