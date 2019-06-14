@@ -36,6 +36,13 @@ object Lexer {
       n <- nat
     } yield -n) <|> nat
 
+  def double: Parser[Double] =
+    for {
+      whole <- int
+      _ <- char('.')
+      dec <- nat
+    } yield s"$whole.$dec".toDouble
+
   def char(c: Char): Parser[Char] = Combinators.satisfy(y => c == y)
 
   def string(s: String): Parser[String] = {
@@ -50,9 +57,10 @@ object Lexer {
   def array[A](pa: Parser[A]): Parser[List[A]] =
     bracket(char('['), Combinators.sepBy1(pa, char(',')), char(']'))
 
-  def bracket[A](open: Parser[Char],
-                 pa: Parser[A],
-                 close: Parser[Char]): Parser[A] =
+  def bracket[A](
+    open: Parser[Char],
+    pa: Parser[A],
+    close: Parser[Char]): Parser[A] =
     for {
       _ <- open
       x <- pa
