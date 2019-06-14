@@ -16,7 +16,7 @@ object Scatto extends App {
     println(twoLettersParser(s))
   }
 
-  val c = new Combinators
+  val c = Combinators
 
   parse(c.letter, "ivan")
 }

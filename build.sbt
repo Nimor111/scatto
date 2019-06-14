@@ -11,5 +11,5 @@ lazy val root = (project in file("."))
     libraryDependencies += scalaTest % Test
   )
 
-initialCommands in console := """import scatto.parser._; import scatto.parser.MonadInstances._; import scatto.parser.MonadPlusInstances._;"""
+initialCommands in console := """import scatto.parser._; import scatto.parser.MonadInstances._; import scatto.parser.MonadPlusInstances._; val c = Combinators;"""
 

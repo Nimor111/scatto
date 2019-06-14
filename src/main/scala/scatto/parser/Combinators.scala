@@ -4,7 +4,7 @@ import scatto.parser.types.Parser
 import scatto.parser.MonadInstances._
 import scatto.parser.MonadPlusInstances._
 
-class Combinators {
+object Combinators {
   def item: Parser[Char] =
     input => if (input.isEmpty) List() else List((input.head, input.tail))
   def satisfy(pred: Char => Boolean): Parser[Char] =
@@ -47,6 +47,13 @@ class Combinators {
       x <- p
       xs <- many(p)
     } yield x +: xs
-}
 
-object Combinators {}
+  def sepBy1[A, B](pa: Parser[A], sep: Parser[B]): Parser[List[A]] =
+    for {
+      x <- pa
+      xs <- many(for {
+        _ <- sep
+        y <- pa
+      } yield y)
+    } yield x :: xs
+}
