@@ -12,7 +12,6 @@ object Combinators {
       x <- item if pred(x)
     } yield x
 
-  def char(c: Char): Parser[Char] = satisfy(y => c == y)
   def digit: Parser[Char] = satisfy(x => x >= '0' && x <= '9')
   def lower: Parser[Char] = satisfy(x => x >= 'a' && x <= 'z')
   def upper: Parser[Char] = satisfy(x => x >= 'A' && x <= 'Z')
@@ -27,14 +26,6 @@ object Combinators {
 
     nonEmptyWord <|> Monad[Parser].unit("")
   }
-  def string(s: String): Parser[String] = {
-    if (s.isEmpty) Monad[Parser].unit("")
-    else
-      for {
-        x <- char(s.head)
-        xs <- string(s.tail)
-      } yield x +: xs
-  }
 
   def many[A](p: Parser[A]): Parser[List[A]] =
     (for {
@@ -47,6 +38,9 @@ object Combinators {
       x <- p
       xs <- many(p)
     } yield x +: xs
+
+  def sepBy[A, B](pa: Parser[A], sep: Parser[B]): Parser[List[A]] =
+    sepBy1(pa, sep) <|> Monad[Parser].unit(List())
 
   def sepBy1[A, B](pa: Parser[A], sep: Parser[B]): Parser[List[A]] =
     for {
