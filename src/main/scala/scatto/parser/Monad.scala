@@ -16,14 +16,14 @@ object Monad {
 
 object MonadInstances {
   implicit class MonadOps[F[_]: Monad, A](fa: F[A]) {
-    def flatMap[B](f: A => F[B]): F[B] = {
-      Monad[F].flatMap(fa)(f)
+    def flatMap[B](f: A => F[B])(implicit m: Monad[F]): F[B] = {
+      m.flatMap(fa)(f)
     }
-    def map[B](f: A => B): F[B] = {
-      Monad[F].map(fa)(f)
+    def map[B](f: A => B)(implicit m: Monad[F]): F[B] = {
+      m.map(fa)(f)
     }
-    def unit[B](a: B): F[B] = {
-      Monad[F].unit(a)
+    def unit[B](a: B)(implicit m: Monad[F]): F[B] = {
+      m.unit(a)
     }
   }
 

@@ -16,11 +16,12 @@ object MonadPlus {
 
 object MonadPlusInstances {
   implicit class MonadPlusOps[F[_]: MonadPlus, A](fa: F[A]) {
-    def <|>(fb: F[A]): F[A] = {
-      MonadPlus[F].mplus(fa, fb)
+    def <|>(fb: F[A])(implicit mp: MonadPlus[F]): F[A] = {
+      mp.mplus(fa, fb)
     }
-    def mzero[B]: F[B] = MonadPlus[F].mzero
-    def withFilter(f: A => Boolean): F[A] = MonadPlus[F].withFilter(fa)(f)
+    def mzero[B](implicit mp: MonadPlus[F]): F[B] = mp.mzero
+    def withFilter(f: A => Boolean)(implicit mp: MonadPlus[F]): F[A] =
+      mp.withFilter(fa)(f)
   }
 
   implicit def parserMonadPlus(implicit m: Monad[Parser]): MonadPlus[Parser] =

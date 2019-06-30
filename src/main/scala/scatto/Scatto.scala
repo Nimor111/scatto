@@ -7,16 +7,14 @@ import scatto.parser._
 case class Letters(s: String)
 
 object Scatto extends App {
-  def parse[A](p: Parser[A], s: String): Unit = {
-    val twoLettersParser = for {
+  def twoLetterParser(p: Parser[Char]): Parser[Letters] = {
+    for {
       x <- p
       y <- p
     } yield Letters(s"$x$y")
-
-    println(twoLettersParser(s))
   }
 
   val c = Combinators
 
-  parse(c.letter, "ivan")
+  println(parseEither(twoLetterParser(c.letter), "ivan"))
 }
