@@ -22,12 +22,13 @@ object Lexer {
     } yield (x +: xs).mkString
 
   def nat: Parser[Int] = {
-    def toNumber(xs: List[Char]): Int =
-      xs.map(x => x.toInt - '0'.toInt).reduceLeft((acc, x) => 10 * acc + x)
+    def op(x: Int, y: Int): Int = 10 * x + y
+    def p: Parser[Int] =
+      for {
+        x <- Combinators.digit
+      } yield x.toInt - '0'.toInt
 
-    for {
-      xs <- Combinators.many1(Combinators.digit)
-    } yield toNumber(xs)
+    Combinators.chainl1(p, Monad[Parser].unit(op))
   }
 
   def int: Parser[Int] =
