@@ -75,8 +75,7 @@ class CombinatorsTest extends FlatSpec with Matchers {
       _ <- Combinators.satisfy(x => x == '+')
     } yield (x: Int, y: Int) => x + y
 
-
     Combinators
-      .chainl1(Lexer.nat, add)("1+2+3").head shouldEqual (6,"")
+      .chainl1(Lexer.nat, add)("1+2+3").head shouldEqual (6, "")
   }
 }

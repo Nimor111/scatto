@@ -5,14 +5,14 @@ import scatto.parser.Lexer
 
 class LexerTest extends FlatSpec with Matchers {
   "space" should "parse whitespaces" in {
-    Lexer.space("  2").head shouldEqual ("  ", "2")
+    Lexer.space("  2") shouldEqual List(("  ", "2"))
   }
 
   "ident" should "parse valid identifiers" in {
-    Lexer.ident("_a").head shouldEqual ("_a", "")
-    Lexer.ident("a").head shouldEqual ("a", "")
-    Lexer.ident("scAt_to").head shouldEqual ("scAt_to", "")
-    Lexer.ident("ClassName").head shouldEqual ("ClassName", "")
+    Lexer.ident("_a") shouldEqual List(("_a", ""))
+    Lexer.ident("a") shouldEqual List(("a", ""))
+    Lexer.ident("scAt_to") shouldEqual List(("scAt_to", ""))
+    Lexer.ident("ClassName") shouldEqual List(("ClassName", ""))
   }
 
   it should "not parse invalid identifiers" in {
@@ -20,8 +20,16 @@ class LexerTest extends FlatSpec with Matchers {
     Lexer.ident("$a") shouldEqual List()
   }
 
+  "keyword" should "parse a keyword" in {
+    Lexer.keyword(List("var", "val"))("var") shouldEqual List(("var", ""))
+  }
+
+  it should "ignore non-keywords" in {
+    Lexer.keyword(List("var", "val"))("name") shouldEqual List()
+  }
+
   "nat" should "parse natural numbers" in {
-    Lexer.nat("123").head shouldEqual (123, "")
+    Lexer.nat("123") shouldEqual List((123, ""))
   }
 
   it should "fail on negative numbers" in {
@@ -29,12 +37,12 @@ class LexerTest extends FlatSpec with Matchers {
   }
 
   "int" should "parse positive and negative numbers" in {
-    Lexer.int("123").head shouldEqual (123, "")
-    Lexer.int("-123").head shouldEqual (-123, "")
+    Lexer.int("123") shouldEqual List((123, ""))
+    Lexer.int("-123") shouldEqual List((-123, ""))
   }
 
   "double" should "parse floating point numbers" in {
-    Lexer.double("123.456").head shouldEqual (123.456, "")
+    Lexer.double("123.456") shouldEqual List((123.456, ""))
   }
 
   it should "fail on integers" in {
@@ -42,7 +50,7 @@ class LexerTest extends FlatSpec with Matchers {
   }
 
   "char" should "parse a character" in {
-    Lexer.char('c')("cd").head shouldEqual ('c', "d")
+    Lexer.char('c')("cd") shouldEqual List(('c', "d"))
   }
 
   it should "fail on wrong character" in {
@@ -50,15 +58,17 @@ class LexerTest extends FlatSpec with Matchers {
   }
 
   "string" should "parse a string" in {
-    Lexer.string("string")("stringer").head shouldEqual ("string", "er")
-    Lexer.string("")("string").head shouldEqual ("", "string")
+    Lexer.string("string")("stringer") shouldEqual List(("string", "er"))
+    Lexer.string("")("string") shouldEqual List(("", "string"))
   }
 
-  "array" should "parse a non-empty array of ints"  in {
-    Lexer.array(Lexer.int)("[1,2,3]").head shouldEqual (List(1, 2, 3), "")
+  "array" should "parse a non-empty array of ints" in {
+    Lexer.array(Lexer.int)("[1,2,3]") shouldEqual List((List(1, 2, 3), ""))
   }
 
   "bracket" should "parse a string in brackets" in {
-    Lexer.bracket(Lexer.char('('), Lexer.string("string"), Lexer.char(')'))("(string)").head shouldEqual ("string", "")
+    Lexer
+      .bracket(Lexer.char('('), Lexer.string("string"), Lexer.char(')'))(
+        "(string)") shouldEqual List(("string", ""))
   }
 }

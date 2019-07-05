@@ -24,6 +24,12 @@ object MonadPlusInstances {
       mp.withFilter(fa)(f)
   }
 
+  implicit class MonadPlusParserOps[A](pa: Parser[A]) {
+    def +++(pb: Parser[A])(implicit mp: MonadPlus[Parser]): Parser[A] = {
+      Combinators.first(mp.mplus(pa, pb))
+    }
+  }
+
   implicit def parserMonadPlus(implicit m: Monad[Parser]): MonadPlus[Parser] =
     new MonadPlus[Parser] {
       def flatMap[A, B](pa: Parser[A])(f: A => Parser[B]): Parser[B] =

@@ -17,8 +17,8 @@ object Lexer {
 
   def ident: Parser[String] =
     for {
-      x <- Combinators.lower <|> Combinators.upper <|> char('_')
-      xs <- Combinators.many(Combinators.alphanum <|> char('_'))
+      x <- Combinators.lower +++ Combinators.upper +++ char('_')
+      xs <- Combinators.many(Combinators.alphanum +++ char('_'))
     } yield (x +: xs).mkString
 
   def keyword(kw: List[String]): Parser[String] =
@@ -40,7 +40,7 @@ object Lexer {
     (for {
       _ <- char('-')
       n <- nat
-    } yield -n) <|> nat
+    } yield -n) +++ nat
 
   def double: Parser[Double] =
     for {
