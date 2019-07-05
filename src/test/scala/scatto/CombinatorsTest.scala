@@ -70,10 +70,13 @@ class CombinatorsTest extends FlatSpec with Matchers {
       .head shouldEqual (List('1', '2', '3'), "")
   }
 
-  //  "chainl1" should "parse an expression with plus" in {
-  //    def op(a: Int, b: Int): Int = a + b
-  //    def fp: Parser[(Int, Int) => Int] = Monad[Parser].unit(op)
-  //    Combinators
-  //      .chainl1(Lexer.nat, fp)("1+2+3") shouldEqual 1
-  //  }
+  "chainl1" should "parse an expression with plus" in {
+    def add: Parser[(Int, Int) => Int] = for {
+      _ <- Combinators.satisfy(x => x == '+')
+    } yield (x: Int, y: Int) => x + y
+
+
+    Combinators
+      .chainl1(Lexer.nat, add)("1+2+3").head shouldEqual (6,"")
+  }
 }
