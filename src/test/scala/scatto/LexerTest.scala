@@ -8,6 +8,18 @@ class LexerTest extends FlatSpec with Matchers {
     Lexer.space("  2") shouldEqual List(("  ", "2"))
   }
 
+  "spaceBefore" should "ignore whitespace in front" in {
+    Lexer.spaceBefore(Lexer.char('a'))("  a")
+  }
+
+  "spaceAfter" should "ignore whitespace after" in {
+    Lexer.spaceAfter(Lexer.char('a'))("a  ")
+  }
+
+  "trim" should "ignore whitespace before and after" in {
+    Lexer.trim(Lexer.char('a'))("  a  ")
+  }
+
   "ident" should "parse valid identifiers" in {
     Lexer.ident("_a") shouldEqual List(("_a", ""))
     Lexer.ident("a") shouldEqual List(("a", ""))

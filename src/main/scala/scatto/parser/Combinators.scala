@@ -37,13 +37,13 @@ object Combinators {
     (for {
       x <- p
       xs <- many(p)
-    } yield x +: xs) +++ Monad[Parser].unit(List())
+    } yield x :: xs) +++ Monad[Parser].unit(List())
 
   def many1[A](p: Parser[A]): Parser[List[A]] =
     for {
       x <- p
       xs <- many(p)
-    } yield x +: xs
+    } yield x :: xs
 
   def sepBy[A, B](pa: Parser[A], sep: Parser[B]): Parser[List[A]] =
     sepBy1(pa, sep) +++ Monad[Parser].unit(List())
@@ -65,4 +65,10 @@ object Combinators {
 
     p.flatMap(rest)
   }
+
+  def count[A](times: Int, pa: Parser[A]): Parser[List[A]] =
+    (for {
+      p <- pa if times > 0
+      ps <- count(times - 1, pa)
+    } yield p :: ps) +++ Monad[Parser].unit(List())
 }
