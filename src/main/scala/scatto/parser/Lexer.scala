@@ -15,6 +15,8 @@ object Lexer {
       _ <- Combinators.many(space)
     } yield ()
 
+  def trim[A](pa: Parser[A]): Parser[A] = spaceBefore(spaceAfter(pa))
+
   def spaceBefore[A](pa: Parser[A]): Parser[A] =
     for {
       _ <- junk

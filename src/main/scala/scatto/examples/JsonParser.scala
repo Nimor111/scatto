@@ -47,15 +47,12 @@ object JsonParser {
     } yield JsonBoolean(b.toBoolean)
 
   def jsonValue: Parser[JsonValue] =
-    jsonNull +++ jsonBoolean +++ jsonString +++ jsonNumber +++ jsonDouble +++ jsonObject +++ jsonArray
+    jsonNull +++ jsonBoolean +++ jsonString +++ jsonDouble +++ jsonNumber +++ jsonObject +++ jsonArray
 
   def jsonArray: Parser[JsonValue] =
     for {
       _ <- Lexer.char('[')
-      arr <- Combinators.sepBy(
-        jsonValue,
-        Lexer.spaceBefore(Lexer.spaceAfter(Lexer.char(',')))
-      )
+      arr <- Combinators.sepBy(jsonValue, Lexer.trim(Lexer.char(',')))
       _ <- Lexer.char(']')
     } yield JsonArray(arr)
 
@@ -65,7 +62,7 @@ object JsonParser {
         _ <- Lexer.string("\"")
         key <- Lexer.word
         _ <- Lexer.string("\"")
-        _ <- Lexer.char(':')
+        _ <- Lexer.spaceBefore(Lexer.char(':'))
         v <- Lexer.spaceBefore(jsonValue)
       } yield (key, v)
 
@@ -73,7 +70,7 @@ object JsonParser {
       arr <- Lexer.bracket(
         Lexer.char('{'),
         Combinators
-          .sepBy(obj, Lexer.spaceBefore(Lexer.spaceAfter(Lexer.char(',')))),
+          .sepBy(obj, Lexer.trim(Lexer.char(','))),
         Lexer.char('}')
       )
     } yield JsonObject(arr.toMap)
@@ -84,7 +81,7 @@ object JsonApp extends App {
   println(
     parseEither(
       JsonParser.jsonObject,
-      "{\"key\": [1,2,3], \"key1\": 1, \"key2\": {\"key3\": \"value1\"}, \"key3\": true}"
+      "{\"key\": [1, 2, 3], \"key1\": 1, \"key2.5\": 2.5, \"key2\": {\"key3\": \"value1\"}, \"key3\": true}"
     )
   )
 }
