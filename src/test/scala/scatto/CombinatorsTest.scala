@@ -80,4 +80,13 @@ class CombinatorsTest extends FlatSpec with Matchers {
       .chainl1(Lexer.nat, add)("1+2+3")
       .head shouldEqual (6, "")
   }
+
+  "count" should "take a fixed amount of characters" in {
+    Combinators.count(2, Combinators.digit)("123") shouldEqual List(
+      (List('1', '2'), "3")
+    )
+    Combinators.count(0, Combinators.digit)("123") shouldEqual List(
+      (List(), "123")
+    )
+  }
 }
