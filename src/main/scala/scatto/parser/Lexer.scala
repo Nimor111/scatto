@@ -5,9 +5,31 @@ import scatto.parser.MonadInstances._
 import scatto.parser.MonadPlusInstances._
 
 object Lexer {
+  def word: Parser[String] =
+    for {
+      s <- Combinators.many(Combinators.satisfy(x => x != '\"'))
+    } yield s.mkString
+
+  def junk: Parser[Unit] =
+    for {
+      _ <- Combinators.many(space)
+    } yield ()
+
+  def spaceBefore[A](pa: Parser[A]): Parser[A] =
+    for {
+      _ <- junk
+      v <- pa
+    } yield v
+
+  def spaceAfter[A](pa: Parser[A]): Parser[A] =
+    for {
+      v <- pa
+      _ <- junk
+    } yield v
+
   def space: Parser[String] =
     for {
-      s <- Combinators.many(char(' '))
+      s <- Combinators.many1(char(' ') +++ char('\n') +++ char('\t'))
     } yield s.mkString
 
   def space1: Parser[String] =
@@ -61,12 +83,17 @@ object Lexer {
   }
 
   def array[A](pa: Parser[A]): Parser[List[A]] =
-    bracket(char('['), Combinators.sepBy1(pa, char(',')), char(']'))
+    bracket(
+      char('['),
+      Combinators.sepBy(pa, spaceBefore(spaceAfter(char(',')))),
+      char(']')
+    )
 
   def bracket[A](
-    open: Parser[Char],
-    pa: Parser[A],
-    close: Parser[Char]): Parser[A] =
+      open: Parser[Char],
+      pa: Parser[A],
+      close: Parser[Char]
+  ): Parser[A] =
     for {
       _ <- open
       x <- pa

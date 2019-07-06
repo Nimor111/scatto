@@ -37,8 +37,9 @@ object MonadInstances {
     }
 
     def map[A, B](pa: Parser[A])(f: A => B): Parser[B] = input => {
-      pa(input).foldRight(List[(B, String)]())((res, acc) =>
-        (f(res._1), res._2) :: acc)
+      pa(input).foldRight(List[(B, String)]())(
+        (res, acc) => (f(res._1), res._2) :: acc
+      )
     }
   }
 }

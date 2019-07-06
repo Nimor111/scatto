@@ -1,7 +1,7 @@
 package scatto
 
 import org.scalatest._
-import scatto.parser.{ Combinators, Lexer, Monad }
+import scatto.parser.{Combinators, Lexer, Monad}
 import scatto.parser.types._
 import scatto.parser.MonadInstances._
 
@@ -71,11 +71,13 @@ class CombinatorsTest extends FlatSpec with Matchers {
   }
 
   "chainl1" should "parse an expression with plus" in {
-    def add: Parser[(Int, Int) => Int] = for {
-      _ <- Combinators.satisfy(x => x == '+')
-    } yield (x: Int, y: Int) => x + y
+    def add: Parser[(Int, Int) => Int] =
+      for {
+        _ <- Combinators.satisfy(x => x == '+')
+      } yield (x: Int, y: Int) => x + y
 
     Combinators
-      .chainl1(Lexer.nat, add)("1+2+3").head shouldEqual (6, "")
+      .chainl1(Lexer.nat, add)("1+2+3")
+      .head shouldEqual (6, "")
   }
 }

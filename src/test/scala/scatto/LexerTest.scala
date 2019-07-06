@@ -69,6 +69,7 @@ class LexerTest extends FlatSpec with Matchers {
   "bracket" should "parse a string in brackets" in {
     Lexer
       .bracket(Lexer.char('('), Lexer.string("string"), Lexer.char(')'))(
-        "(string)") shouldEqual List(("string", ""))
+        "(string)"
+      ) shouldEqual List(("string", ""))
   }
 }

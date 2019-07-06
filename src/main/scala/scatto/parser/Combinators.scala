@@ -59,9 +59,10 @@ object Combinators {
 
   def chainl1[A](p: Parser[A], op: Parser[(A, A) => A]): Parser[A] = {
     def rest(x: A): Parser[A] =
-      op.flatMap(operation => p.flatMap(y => rest(operation(x, y)))) +++ Monad[Parser].unit(x)
+      op.flatMap(operation => p.flatMap(y => rest(operation(x, y)))) +++ Monad[
+        Parser
+      ].unit(x)
 
     p.flatMap(rest)
   }
-
 }
