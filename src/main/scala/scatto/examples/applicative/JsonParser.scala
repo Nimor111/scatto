@@ -1,3 +1,5 @@
+// NOTE - this overflows atm, TODO try some Eval monad optimizations
+
 package scatto.examples.applicative
 
 import scatto.parser.ApplicativeInstances._
@@ -75,10 +77,8 @@ object JsonParser {
 object JsonApp extends App {
   println(
     parseEither(
-      //JsonParser.jsonObject,
-      //"{\"key\": [1, 2, 3], \"key1\": 1, \"key2.5\": 2.5, \"key2\": {\"key3\": \"value1\"}, \"key3\": true, \"key4\": null}"))
       JsonParser.jsonObject,
-      "{\"key\": 1}"
+      "{\"key\": [1, 2, 3], \"key1\": 1, \"key2.5\": 2.5, \"key2\": {\"key3\": \"value1\"}, \"key3\": true, \"key4\": null}"
     )
   )
 }
