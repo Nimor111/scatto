@@ -81,7 +81,7 @@ object JsonApp extends App {
   println(
     parseEither(
       JsonParser.jsonObject,
-      "{\"key\": [1, 2, 3], \"key1\": 1, \"key2.5\": 2.5, \"key2\": {\"key3\": \"value1\"}, \"key3\": true}"
+      "{\"key\": [1, 2, 3], \"key1\": 1, \"key2.5\": 2.5, \"key2\": {\"key3\": \"value1\"}, \"key3\": true, \"key4\": null}"
     )
   )
 }
