@@ -32,14 +32,15 @@ object MonadInstances {
     def flatMap[A, B](pa: Parser[A])(f: A => Parser[B]): Parser[B] = input => {
       val acc = List(List[(B, String)]())
       pa(input)
-        .foldRight(acc)((res: (A, String), a) => f(res._1)(res._2) :: a)
+        .foldLeft(acc)((a, res: (A, String)) => f(res._1)(res._2) :: a)
+        .reverse
         .flatten
     }
 
     def map[A, B](pa: Parser[A])(f: A => B): Parser[B] = input => {
-      pa(input).foldRight(List[(B, String)]())(
-        (res, acc) => (f(res._1), res._2) :: acc
-      )
+      pa(input)
+        .foldLeft(List[(B, String)]())((acc, res) => (f(res._1), res._2) :: acc)
+        .reverse
     }
   }
 }

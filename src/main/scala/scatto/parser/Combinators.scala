@@ -33,11 +33,15 @@ object Combinators {
     nonEmptyWord +++ Monad[Parser].unit("")
   }
 
-  def many[A](p: Parser[A]): Parser[List[A]] =
-    (for {
-      x <- p
-      xs <- many(p)
-    } yield x :: xs) +++ Monad[Parser].unit(List())
+  def many[A](p: Parser[A]): Parser[List[A]] = {
+    def pa: Parser[List[A]] =
+      (for {
+        x <- p
+        xs <- many(p)
+      } yield x :: xs)
+
+    pa +++ Monad[Parser].unit(List())
+  }
 
   def many1[A](p: Parser[A]): Parser[List[A]] =
     for {

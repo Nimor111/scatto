@@ -1,4 +1,4 @@
-package scatto.examples
+package scatto.examples.monadic
 
 import scatto.parser.types._
 import scatto.parser.Combinators
@@ -6,23 +6,7 @@ import scatto.parser.Lexer
 import scatto.parser.MonadInstances._
 import scatto.parser.MonadPlusInstances._
 
-/*
-  Logs are in the form:
-  yyyy-mm-dd hh:mm:ss 0.0.0.0 product
- */
-
-case class Date(day: Int, month: Int, year: Int)
-case class Time(seconds: Int, minutes: Int, hours: Int)
-case class IP(first: Int, second: Int, third: Int, fourth: Int)
-
-sealed trait Product
-
-case object Computer extends Product
-case object Keyboard extends Product
-case object Mouse extends Product
-case object Laptop extends Product
-
-case class Log(date: Date, time: Time, ip: IP, product: Product)
+import scatto.examples.types.LogTypes._
 
 object LogParser {
   def dateParser: Parser[Date] =

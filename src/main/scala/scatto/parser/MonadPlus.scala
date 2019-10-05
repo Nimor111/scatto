@@ -16,9 +16,6 @@ object MonadPlus {
 
 object MonadPlusInstances {
   implicit class MonadPlusOps[F[_]: MonadPlus, A](fa: F[A]) {
-    def <|>(fb: F[A])(implicit mp: MonadPlus[F]): F[A] = {
-      mp.mplus(fa, fb)
-    }
     def mzero[B](implicit mp: MonadPlus[F]): F[B] = mp.mzero
     def withFilter(f: A => Boolean)(implicit mp: MonadPlus[F]): F[A] =
       mp.withFilter(fa)(f)

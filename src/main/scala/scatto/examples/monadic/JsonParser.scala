@@ -1,4 +1,4 @@
-package scatto.examples
+package scatto.examples.monadic
 
 import scala.math.BigDecimal
 
@@ -8,15 +8,7 @@ import scatto.parser.Lexer
 import scatto.parser.MonadInstances._
 import scatto.parser.MonadPlusInstances._
 
-sealed trait JsonValue
-
-case object JsonNull extends JsonValue
-case class JsonInt(value: BigDecimal) extends JsonValue
-case class JsonDouble(value: Double) extends JsonValue
-case class JsonString(string: String) extends JsonValue
-case class JsonBoolean(bool: Boolean) extends JsonValue
-case class JsonArray(value: List[JsonValue]) extends JsonValue
-case class JsonObject(value: Map[String, JsonValue]) extends JsonValue
+import scatto.examples.types.JsonTypes._
 
 object JsonParser {
   def jsonNull: Parser[JsonValue] =

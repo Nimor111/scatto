@@ -39,7 +39,7 @@ object ApplicativeInstances {
       def pure[A](v: A): Parser[A] = input => List((v, input))
       def ap[A, B](ff: Parser[A => B])(fa: Parser[A]): Parser[B] = input => {
         val acc = List[(B, String)]()
-        ff(input).foldRight(acc)((res: (A => B, String), a) => {
+        ff(input).foldLeft(acc)((a, res: (A => B, String)) => {
           val (f, out) = res
           val res2 = fa(out)
           val applied = res2.map((r => (f(r._1), r._2)))
