@@ -1,9 +1,11 @@
 package scatto
 
 import org.scalatest._
+import flatspec._
+import matchers._
 import scatto.parser.Lexer
 
-class LexerTest extends FlatSpec with Matchers {
+class LexerTest extends AnyFlatSpec with should.Matchers {
   "space" should "parse whitespaces" in {
     Lexer.space("  2") shouldEqual List(("  ", "2"))
   }
