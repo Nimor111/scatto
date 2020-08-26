@@ -1,11 +1,13 @@
 package scatto
 
 import org.scalatest._
+import flatspec._
+import matchers._
 import scatto.parser.{Combinators, Lexer, Monad}
 import scatto.parser.types._
 import scatto.parser.MonadInstances._
 
-class CombinatorsTest extends FlatSpec with Matchers {
+class CombinatorsTest extends AnyFlatSpec with should.Matchers {
   "satisfy" should "parse correct characters" in {
     Combinators.satisfy(x => x == 'a')("a") shouldEqual List(('a', ""))
   }
